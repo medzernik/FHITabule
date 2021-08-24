@@ -14,6 +14,8 @@ type CalendarInformation struct {
 }
 
 func Initialization() {
+
+	//TODO: make this load more files and also into an array
 	f, _ := os.Open("calendar_files/01cal.ics")
 	defer f.Close()
 
@@ -35,6 +37,7 @@ func ParseIntoVariables(c *gocal.Gocal, calendarEvents *[][]CalendarInformation)
 	//var j int
 
 	//Search through the entire file
+	//TODO: make it an array
 	for _, e := range c.Events {
 		fmt.Println(e.Summary)
 		//if e.
