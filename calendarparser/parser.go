@@ -34,9 +34,9 @@ func Initialization() {
 }
 
 func ParseIntoVariables(c *gocal.Gocal) {
-	var todaysDate time.Time = time.Now()
+	//var todaysDate time.Time = time.Now()
 	//2D slice array of [X][Y]. X is the room, Y is the subjects within it.
-	var CalendarEvents [5][40]CalendarInformation
+
 	var location []string
 	var locationProcessed []string
 	var floor string
@@ -45,16 +45,20 @@ func ParseIntoVariables(c *gocal.Gocal) {
 	var summary []string
 	var summaryProcessed []string
 	var summaryTemp []string
-
+	var CalendarEvents []CalendarInformation = make([]CalendarInformation, len(c.Events))
 	//Search through the entire file
 	//TODO: make it an array
-	for i := 0; i < 5; i++ {
-		for _, e := range c.Events {
+
+	for _, e := range c.Events {
+		for i := 0; i < len(c.Events); i++ {
+
+			//Parsing the location and getting a room number and floor number
 			location = strings.Split(e.Location, ", ")
 			locationProcessed = strings.Split(location[0], ".")
 			floor = locationProcessed[0]
 			room = locationProcessed[1]
 
+			//Parsing the ridiculous and messy Summary line. First we get the information about whether it's a course or presentation
 			if strings.Contains(e.Summary, " C ") {
 				summary = strings.Split(e.Summary, " C ")
 				presentationBool = false
@@ -63,33 +67,34 @@ func ParseIntoVariables(c *gocal.Gocal) {
 				presentationBool = true
 			}
 
+			//Then after splitting the line in a slice we further split the slice by every space
 			summaryTemp = strings.SplitN(summary[0], " ", -1)
 
+			//We know that the name of the subject can be multiple words but it always starts after the first--
+			//--2 space members. We get that until the end (end was split by C or P, since its always before that)
 			summaryProcessed = summaryTemp[2:]
 
-			fmt.Println("-----\nNESPRACOVANE: ", summary)
-			fmt.Println("SPRACOVANE: ", summaryProcessed, "\n------")
-			fmt.Println(presentationBool)
+			//Important debug statements
+			/*
+				fmt.Println("-----\nNESPRACOVANE: ", summary)
+				fmt.Println("SPRACOVANE: ", summaryProcessed, "\n------")
+				fmt.Println(presentationBool)
 
-			fmt.Println("\nTMP:")
-			fmt.Println(summary)
+				fmt.Println("\nTMP:")
+				fmt.Println(summary)
 
-			for j := 0; j < 40; j++ {
-				if e.Start.Day() == todaysDate.Day() {
+			*/
 
-					CalendarEvents[i][j].EventName = e.Summary
-					CalendarEvents[i][j].DateStart = *e.Start
-					CalendarEvents[i][j].DateEnd = *e.End
-					CalendarEvents[i][j].Floor = floor
-					CalendarEvents[i][j].Room = room
-					CalendarEvents[i][j].Presentation = presentationBool
-
-				}
-
-			}
+			CalendarEvents[i].EventName = strings.Join(summaryProcessed[0:], " ")
+			CalendarEvents[i].DateStart = *e.Start
+			CalendarEvents[i].DateEnd = *e.End
+			CalendarEvents[i].Floor = floor
+			CalendarEvents[i].Room = room
+			CalendarEvents[i].Presentation = presentationBool
 
 		}
-		//fmt.Println(CalendarEvents[0][0].EventName)
+		fmt.Printf("%+v\n", CalendarEvents)
+		fmt.Println(len(CalendarEvents))
 	}
 
 }
