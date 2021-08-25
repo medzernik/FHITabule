@@ -17,7 +17,15 @@ type CalendarInformation struct {
 	Presentation bool
 }
 
+type CurrentTime struct {
+	StartTime time.Time
+	EndTime   time.Time
+}
+
+var Hodina uint
+
 func Initialization() {
+
 	var timeToDisplayHours time.Duration = 6
 
 	//TODO: make this load more files and also into an array
@@ -104,9 +112,65 @@ func ParseIntoVariables(c *gocal.Gocal) {
 
 	//fmt.Printf("%+v\n", CalendarEvents)
 	//fmt.Println(len(CalendarEvents))
+	PrintClasses(CalendarEvents)
+
+}
+
+func PrintClasses(CalendarEvents []CalendarInformation) {
+
+	//TODO: POROVNAT CAS A VYPISAT LEN TO CO TREBA V SUCASNU HODINU
+	timeCurrentTemp := time.Date(2021, 10, 11, 11, 46, 0, 0, time.Now().Location())
+
 	for l := range CalendarEvents {
-		fmt.Printf("%+v\n", CalendarEvents[l])
+		if AssignTime(timeCurrentTemp) == AssignTime(CalendarEvents[l].DateStart) {
+			fmt.Println("---------------------------")
+			fmt.Println("POSCHODIE: ", CalendarEvents[l].Floor)
+			if CalendarEvents[l].Presentation == true {
+				fmt.Println("PREDNASKA")
+			} else {
+				fmt.Println("CVICENIE")
+			}
+			fmt.Println("PREDMET: ", CalendarEvents[l].EventName)
+			fmt.Println("V MIESTNOSTI", CalendarEvents[l].Floor+"."+CalendarEvents[l].Room)
+			fmt.Println("CAS: ", CalendarEvents[l].DateStart.String())
+
+		}
+		//fmt.Printf("%+v\n", CalendarEvents[l])
 
 	}
+}
+
+func AssignTime(inputTime time.Time) int {
+	var sucasnaHodina int
+
+	prvaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 7, 15, 0, 0, time.Now().Location())
+	druhaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 9, 20, 0, 0, time.Now().Location())
+	tretiaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 10, 45, 0, 0, time.Now().Location())
+	stvrtaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 12, 30, 0, 0, time.Now().Location())
+	piataHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 15, 0, 0, 0, time.Now().Location())
+	siestaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 16, 45, 0, 0, time.Now().Location())
+	siedmaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 18, 25, 0, 0, time.Now().Location())
+	osmaHodina := time.Date(inputTime.Year(), inputTime.Month(), inputTime.Day(), 20, 00, 0, 0, time.Now().Location())
+
+	if inputTime.Before(prvaHodina) {
+		sucasnaHodina = 1
+	} else if inputTime.Before(druhaHodina) && inputTime.After(prvaHodina) {
+		sucasnaHodina = 2
+	} else if inputTime.Before(tretiaHodina) && inputTime.After(druhaHodina) {
+		sucasnaHodina = 3
+	} else if inputTime.Before(stvrtaHodina) && inputTime.After(tretiaHodina) {
+		sucasnaHodina = 4
+	} else if inputTime.Before(piataHodina) && inputTime.After(stvrtaHodina) {
+		sucasnaHodina = 5
+	} else if inputTime.Before(siestaHodina) && inputTime.After(piataHodina) {
+		sucasnaHodina = 6
+	} else if inputTime.Before(siedmaHodina) && inputTime.After(siestaHodina) {
+		sucasnaHodina = 7
+	} else if inputTime.Before(osmaHodina) && inputTime.After(siedmaHodina) {
+		sucasnaHodina = 8
+	}
+
+	fmt.Println("HODINA SUCASNA JE:", sucasnaHodina)
+	return sucasnaHodina
 
 }
