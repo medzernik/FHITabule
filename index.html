@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+
+   // var objs = .map(JSON.parse)
+
+   /*
+   $.getJSON("test.json", function(json) {
+       console.log(json); // this will show the info it in firebug console
+   });
+
+   let object;
+   let httpRequest = new XMLHttpRequest(); // asynchronous request
+   httpRequest.open("GET", "data.json", true);
+   httpRequest.send();
+   httpRequest.addEventListener("readystatechange", function() {
+       if (this.readyState === this.DONE) {
+           // when the request has completed
+           object = JSON.parse(this.response);
+       }
+   });
+
+    */
+
+
+    var predmety = $.getJSON('data.json', function (json) {
+        var array = [];
+        for (var key in json) {
+            if (json.hasOwnProperty(key)) {
+                var item = json[key];
+                array.push({
+                    UUID: item.UUID,
+                    EventName: item.EventName,
+                    DateStart: item.DateStart,
+                    DateEnd: item.DateEnd,
+                    EventTime: item.EventTime,
+                    Floor: item.Floor,
+                    Room: item.Room,
+                    Presentation: item.Presentation
+                });
+            }
+        }
+
+
+
+    });
+
+
+
+
+    document.write(predmety)
+
+</script>
+
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 package calendarparser
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/apognu/gocal"
 	"os"
@@ -13,6 +14,7 @@ type CalendarInformation struct {
 	EventName    string
 	DateStart    time.Time
 	DateEnd      time.Time
+	EventTime    string
 	Floor        string
 	Room         string
 	Presentation bool
@@ -24,6 +26,7 @@ type CurrentTime struct {
 }
 
 var Output []string
+var javaScriptHtmlVariable []string
 
 func Initialization() {
 
@@ -116,6 +119,7 @@ func ParseIntoVariables(c *gocal.Gocal) {
 		CalendarEvents[iterator].Room = room
 		CalendarEvents[iterator].Presentation = presentationBool
 		CalendarEvents[iterator].UUID = e.Uid
+		CalendarEvents[iterator].EventTime = e.Start.Format(time.Kitchen)
 
 		iterator += 1
 
@@ -153,9 +157,10 @@ func PrintClasses(CalendarEvents []CalendarInformation) {
 		//fmt.Printf("%+v\n", CalendarEvents[l])
 
 	}
-	fmt.Println("--------\nOUTPUT:\n", Output, "\n")
+	//fmt.Println("--------\nOUTPUT:\n", Output, "\n")
 	fmt.Println("Length: ", len(Output))
 
+	MarshalJSON(CalendarEvents)
 }
 
 func AssignTime(inputTime time.Time) int {
@@ -193,4 +198,27 @@ func AssignTime(inputTime time.Time) int {
 	sucasnaHodina = 4
 	return sucasnaHodina
 
+}
+
+//Testing of save and read of a file
+func MarshalJSON(CalendarEvents []CalendarInformation) {
+	var tmpArray []interface{}
+
+	b, err := json.Marshal(CalendarEvents)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err1 := os.WriteFile("data.json", b, 0777)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+
+	rea, err2 := os.ReadFile("data.json")
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+
+	json.Unmarshal(rea, &tmpArray)
+
+	fmt.Println(tmpArray)
 }
