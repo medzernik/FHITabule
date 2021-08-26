@@ -27,20 +27,23 @@ var Output []string
 
 func Initialization() {
 
-	var timeToDisplayHours time.Duration = 12
-	var calendarFileNames []string
-	calendarFileNames = append(calendarFileNames, "calendar_files/01cal.ics", "calendar_files/02cal.ics")
+	var timeToDisplayHours time.Duration = 24 * 7
+	calendarFiles, err := os.ReadDir("calendar_files")
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	fmt.Println(calendarFileNames)
-
-	for _, cal := range calendarFileNames {
+	for _, cal := range calendarFiles {
 
 		//TODO: make this load more files and also into an array
-		f, _ := os.Open(cal)
+		f, err1 := os.Open("calendar_files/" + cal.Name())
+		if err1 != nil {
+			fmt.Println("ERROR: ", err)
+		}
 		defer f.Close()
 
 		//*10000 is a debug
-		start, end := time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()), time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()).Add(timeToDisplayHours*time.Hour)
+		start, end := time.Date(2021, 9, 20, 10, 0, 0, 0, time.Now().Location()), time.Date(2021, 9, 20, 10, 0, 0, 0, time.Now().Location()).Add(timeToDisplayHours*time.Hour)
 
 		c := gocal.NewParser(f)
 		c.Start, c.End = &start, &end
@@ -53,7 +56,6 @@ func Initialization() {
 
 func ParseIntoVariables(c *gocal.Gocal) {
 	//var todaysDate time.Time = time.Date(2021, 9, 28, time.Now().Hour(), time.Now().Minute(), time.Now().Second(), time.Now().Nanosecond(), time.Now().Location())
-	//2D slice array of [X][Y]. X is the room, Y is the subjects within it.
 
 	var location []string
 	var locationProcessed []string
@@ -152,6 +154,7 @@ func PrintClasses(CalendarEvents []CalendarInformation) {
 
 	}
 	fmt.Println("--------\nOUTPUT:\n", Output, "\n")
+	fmt.Println("Length: ", len(Output))
 
 }
 
