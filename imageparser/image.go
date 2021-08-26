@@ -1,0 +1,5 @@
+package imageparser
+
+func initialization() {
+
+}

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/apognu/gocal"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
 
 type CalendarInformation struct {
+	UUID         string
 	EventName    string
 	DateStart    time.Time
 	DateEnd      time.Time
@@ -23,24 +23,31 @@ type CurrentTime struct {
 	EndTime   time.Time
 }
 
-var Output string
+var Output []string
 
 func Initialization() {
 
-	var timeToDisplayHours time.Duration = 6
+	var timeToDisplayHours time.Duration = 12
+	var calendarFileNames []string
+	calendarFileNames = append(calendarFileNames, "calendar_files/01cal.ics", "calendar_files/02cal.ics")
 
-	//TODO: make this load more files and also into an array
-	f, _ := os.Open("calendar_files/01cal.ics")
-	defer f.Close()
+	fmt.Println(calendarFileNames)
 
-	//*10000 is a debug
-	start, end := time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()), time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()).Add(timeToDisplayHours*time.Hour)
+	for _, cal := range calendarFileNames {
 
-	c := gocal.NewParser(f)
-	c.Start, c.End = &start, &end
-	c.Parse()
+		//TODO: make this load more files and also into an array
+		f, _ := os.Open(cal)
+		defer f.Close()
 
-	ParseIntoVariables(c)
+		//*10000 is a debug
+		start, end := time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()), time.Date(2021, 10, 11, 10, 0, 0, 0, time.Now().Location()).Add(timeToDisplayHours*time.Hour)
+
+		c := gocal.NewParser(f)
+		c.Start, c.End = &start, &end
+		c.Parse()
+
+		ParseIntoVariables(c)
+	}
 
 }
 
@@ -106,6 +113,7 @@ func ParseIntoVariables(c *gocal.Gocal) {
 		CalendarEvents[iterator].Floor = floor
 		CalendarEvents[iterator].Room = room
 		CalendarEvents[iterator].Presentation = presentationBool
+		CalendarEvents[iterator].UUID = e.Uid
 
 		iterator += 1
 
@@ -120,32 +128,31 @@ func ParseIntoVariables(c *gocal.Gocal) {
 }
 
 func PrintClasses(CalendarEvents []CalendarInformation) {
-	timeCurrentTemp := time.Date(2021, 10, 11, 11, 46, 0, 0, time.Now().Location())
 
-	for l := range CalendarEvents {
+	timeCurrentTemp := time.Date(2021, 10, 11, 10, 46, 0, 0, time.Now().Location())
+	var tmp string
+
+	for _, cal := range CalendarEvents {
 		//TODO: Change the first part of the comparison to time.Now() for production
-		if AssignTime(timeCurrentTemp) == AssignTime(CalendarEvents[l].DateStart) {
-			Output += "POSCHODIE: " + CalendarEvents[l].Floor + "\n"
-			fmt.Println("---------------------------")
-			fmt.Println("POSCHODIE: ", CalendarEvents[l].Floor)
-			if CalendarEvents[l].Presentation == true {
-				fmt.Println("PREDNASKA")
-				Output += "PREDNASKA "
+		if AssignTime(timeCurrentTemp) == AssignTime(cal.DateStart) {
+			tmp = "Nazov predmetu: " + cal.EventName + "\n"
+			if cal.Presentation == true {
+				tmp += "PREDNASKA\n"
 			} else {
-				fmt.Println("CVICENIE")
-				Output += "CVICENIE\n"
+				tmp += "CVICENIE\n"
 			}
-			fmt.Println("PREDMET: ", CalendarEvents[l].EventName)
-			Output += "PREDMET: " + CalendarEvents[l].EventName + "\n"
-			fmt.Println("V MIESTNOSTI ", CalendarEvents[l].Floor+"."+CalendarEvents[l].Room)
-			Output += "V MIESTNOSTI: " + CalendarEvents[l].Floor + "." + CalendarEvents[l].Room + "\n"
-			fmt.Println("CAS: ", CalendarEvents[l].DateStart.Hour(), "hodin", CalendarEvents[l].DateStart.Minute(), "minut")
-			Output += "CAS: " + strconv.FormatInt(int64(CalendarEvents[l].DateStart.Hour()), 10) + ":" + strconv.FormatInt(int64(CalendarEvents[l].DateStart.Minute()), 10)
-
+			tmp += "Poschodie: " + cal.Floor + "\n"
+			tmp += "Miestnost: " + cal.Room + "\n"
+			tmp += "Cas: " + cal.DateStart.Format(time.Kitchen) + "\n"
+			//Debug tmp addon
+			tmp += "-------------\n\n"
+			Output = append(Output, tmp)
 		}
 		//fmt.Printf("%+v\n", CalendarEvents[l])
 
 	}
+	fmt.Println("--------\nOUTPUT:\n", Output, "\n")
+
 }
 
 func AssignTime(inputTime time.Time) int {
@@ -179,6 +186,8 @@ func AssignTime(inputTime time.Time) int {
 	}
 
 	//fmt.Println("HODINA SUCASNA JE:", sucasnaHodina)
+
+	sucasnaHodina = 4
 	return sucasnaHodina
 
 }
