@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/apognu/gocal"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -22,7 +23,7 @@ type CurrentTime struct {
 	EndTime   time.Time
 }
 
-var Hodina uint
+var Output string
 
 func Initialization() {
 
@@ -112,27 +113,34 @@ func ParseIntoVariables(c *gocal.Gocal) {
 
 	//fmt.Printf("%+v\n", CalendarEvents)
 	//fmt.Println(len(CalendarEvents))
+
+	//Print the current stuff
 	PrintClasses(CalendarEvents)
 
 }
 
 func PrintClasses(CalendarEvents []CalendarInformation) {
-
-	//TODO: POROVNAT CAS A VYPISAT LEN TO CO TREBA V SUCASNU HODINU
 	timeCurrentTemp := time.Date(2021, 10, 11, 11, 46, 0, 0, time.Now().Location())
 
 	for l := range CalendarEvents {
+		//TODO: Change the first part of the comparison to time.Now() for production
 		if AssignTime(timeCurrentTemp) == AssignTime(CalendarEvents[l].DateStart) {
+			Output += "POSCHODIE: " + CalendarEvents[l].Floor + "\n"
 			fmt.Println("---------------------------")
 			fmt.Println("POSCHODIE: ", CalendarEvents[l].Floor)
 			if CalendarEvents[l].Presentation == true {
 				fmt.Println("PREDNASKA")
+				Output += "PREDNASKA "
 			} else {
 				fmt.Println("CVICENIE")
+				Output += "CVICENIE\n"
 			}
 			fmt.Println("PREDMET: ", CalendarEvents[l].EventName)
-			fmt.Println("V MIESTNOSTI", CalendarEvents[l].Floor+"."+CalendarEvents[l].Room)
-			fmt.Println("CAS: ", CalendarEvents[l].DateStart.String())
+			Output += "PREDMET: " + CalendarEvents[l].EventName + "\n"
+			fmt.Println("V MIESTNOSTI ", CalendarEvents[l].Floor+"."+CalendarEvents[l].Room)
+			Output += "V MIESTNOSTI: " + CalendarEvents[l].Floor + "." + CalendarEvents[l].Room + "\n"
+			fmt.Println("CAS: ", CalendarEvents[l].DateStart.Hour(), "hodin", CalendarEvents[l].DateStart.Minute(), "minut")
+			Output += "CAS: " + strconv.FormatInt(int64(CalendarEvents[l].DateStart.Hour()), 10) + ":" + strconv.FormatInt(int64(CalendarEvents[l].DateStart.Minute()), 10)
 
 		}
 		//fmt.Printf("%+v\n", CalendarEvents[l])
@@ -170,7 +178,7 @@ func AssignTime(inputTime time.Time) int {
 		sucasnaHodina = 8
 	}
 
-	fmt.Println("HODINA SUCASNA JE:", sucasnaHodina)
+	//fmt.Println("HODINA SUCASNA JE:", sucasnaHodina)
 	return sucasnaHodina
 
 }

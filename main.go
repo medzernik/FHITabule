@@ -2,24 +2,17 @@ package main
 
 import (
 	"FHITabule/calendarparser"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
+	"github.com/webview/webview"
 )
 
 func main() {
-	go calendarparser.Initialization()
+	calendarparser.Initialization()
 
-	a := app.New()
-	w := a.NewWindow("Hello")
-
-	hello := widget.NewLabel("Hello Fyne!")
-	w.SetContent(container.NewVBox(
-		hello,
-		widget.NewButton("Hi!", func() {
-			hello.SetText("Welcome :)")
-		}),
-	))
-
-	w.ShowAndRun()
+	debug := true
+	w := webview.New(debug)
+	defer w.Destroy()
+	w.SetTitle("Minimal webview example")
+	w.SetSize(800, 600, webview.HintNone)
+	w.Navigate("https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66")
+	w.Run()
 }
