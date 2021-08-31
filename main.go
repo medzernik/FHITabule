@@ -7,13 +7,22 @@ import (
 	"github.com/asticode/go-astilectron"
 	"log"
 	"os"
+	"os/exec"
 	"time"
 )
 
 func main() {
+	cmd := exec.Command("node app.js")
+
+	errJS := cmd.Run()
+
+	if errJS != nil {
+		fmt.Println(errJS)
+	}
+
 	calendarparser.Initialization()
 
-	var runElectron = false
+	var runElectron = true
 
 	if runElectron == true {
 		// Make HTTP GET request
@@ -40,8 +49,6 @@ func main() {
 
 		//TODO: google API cesta na hopu MHD + auto
 		var link_imhd string = "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66"
-
-		//{{$imhd = $link_imhd}}
 
 		for {
 			err := w.ExecuteJavaScript("window.location.href = " + link_imhd + ";")
