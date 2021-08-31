@@ -26,7 +26,14 @@ const server = http.createServer((req, res) => {
         res.write(student[i].EventTime.toString()+ "\n", "utf8")
         res.write(student[i].Floor.toString()+ "\n", "utf8")
         res.write(student[i].Room.toString()+ "\n", "utf8")
-        res.write(student[i].Presentation.toString()+ "\n------------------\n")
+
+        if (student[i].Presentation.toString() == "false"){
+            res.write("Cvičenie", "utf8")
+        } else {
+            res.write("Prednáška", "utf8")
+        }
+
+        res.write("\n------------------\n")
 
     }
     res.end("END OF VYPIS")

@@ -17,8 +17,9 @@ func runLocalWebpageDisplay() {
 	parts := strings.Fields(command)
 	_, err := exec.Command(parts[0], parts[1:]...).Output()
 	if err != nil {
-		panic(err)
+		fmt.Println("ERROR LOADING THE WEBSITE FORMATTER: ", err)
 	}
+
 }
 
 func main() {
@@ -50,13 +51,26 @@ func main() {
 			Height:          astikit.IntPtr(600),
 			Width:           astikit.IntPtr(600),
 			Minimizable:     astikit.BoolPtr(false),
-			Fullscreen:      astikit.BoolPtr(true),
+			Fullscreen:      astikit.BoolPtr(false),
 			BackgroundColor: astikit.StrPtr("black"),
 		})
 		w.Create()
 
 		//TODO: google API cesta na hopu MHD + auto
-		links := [2]string{"https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000"}
+		var links []string
+
+		links = append(links, "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000", "file:///C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/Slide1.PNG")
+
+		imagePath, errDir := os.ReadDir("presentation_images")
+		if errDir != nil {
+			fmt.Println("ERROR READING THE DIRECTORY", errDir)
+		}
+
+		fmt.Println(imagePath[0].Name())
+
+		for _, i := range imagePath {
+			links = append(links, "file:///C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/"+i.Name())
+		}
 
 		for {
 			for i := range links {
@@ -64,7 +78,7 @@ func main() {
 				if err != nil {
 					fmt.Println("ERROR:", err)
 				}
-				time.Sleep(5 * time.Second)
+				time.Sleep(3 * time.Second)
 			}
 		}
 
