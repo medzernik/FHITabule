@@ -8,7 +8,8 @@ import (
 
 type Config struct {
 	Nastavenie struct {
-		Poschodie int `yaml:"poschodie"`
+		Poschodie int    `yaml:"poschodie"`
+		APIkluc   string `yaml:"apikluc"`
 	}
 }
 

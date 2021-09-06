@@ -5,6 +5,7 @@ const port = 3000;
 
 const server = http.createServer((req, res) => {
 
+
     res.statusCode = 200;
     res.writeHead(200, {"Content-Type" : "text/plain; charset=UTF-8"});
 
@@ -17,6 +18,9 @@ const server = http.createServer((req, res) => {
 
 
     let studentLength = student.length
+
+
+
 
     for (let i = 0; i < studentLength ; i++){
         console.log(student[i])
@@ -36,6 +40,13 @@ const server = http.createServer((req, res) => {
         res.write("\n------------------\n")
 
     }
+
+
+
+
+    res.render('studentlist',{'studentlist' : result} );
+
+
     res.end("END OF VYPIS")
 });
 
