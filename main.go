@@ -7,6 +7,7 @@ import (
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -26,12 +27,13 @@ func runLocalWebpageDisplay() {
 func main() {
 	config.Initialization()
 	go runLocalWebpageDisplay()
+	go StartCustomServer()
 
 	//calendarparser.Initialization()
 	minutesTraveled := distance.GetTimeToHOPA("University of Economics in Bratislava, Dolnozemská cesta 1, 852 35 Petržalka, Slovakia", "Študentský domov Prokopa Veľkého, \"HOPA\", Prokopa Veľkého 41, 811 04 Bratislava, Slovakia")
 	fmt.Println("Travel time to HOPA: ", minutesTraveled, " minut")
 
-	var runElectron = false
+	var runElectron = true
 
 	if runElectron == true {
 
@@ -49,7 +51,7 @@ func main() {
 
 		// Start astilectron
 		a.Start()
-		var w, _ = a.NewWindow("https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", &astilectron.WindowOptions{
+		var w, _ = a.NewWindow("http://localhost:3000", &astilectron.WindowOptions{
 			Center:          astikit.BoolPtr(true),
 			Height:          astikit.IntPtr(600),
 			Width:           astikit.IntPtr(600),
@@ -58,11 +60,12 @@ func main() {
 			BackgroundColor: astikit.StrPtr("black"),
 		})
 		w.Create()
+		w.OpenDevTools()
 
 		//TODO: google API cesta na hopu MHD + auto
 		var links []string
 
-		links = append(links, "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000", "file:///C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/Slide1.PNG")
+		links = append(links, "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000", "file://C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/Slide1.PNG")
 
 		imagePath, errDir := os.ReadDir("presentation_images")
 		if errDir != nil {
@@ -72,10 +75,11 @@ func main() {
 		fmt.Println(imagePath[0].Name())
 
 		for _, i := range imagePath {
-			links = append(links, "file:///C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/"+i.Name())
+			links = append(links, "file://C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/"+i.Name())
 		}
 
 		for {
+
 			for i := range links {
 				err := w.ExecuteJavaScript("window.location.href = \"" + links[i] + "\";")
 				if err != nil {
@@ -83,10 +87,19 @@ func main() {
 				}
 				time.Sleep(3 * time.Second)
 			}
+
 		}
 
 		// Blocking pattern
 		a.Wait()
 	}
 
+}
+
+func StartCustomServer() {
+	http.Handle("/", http.FileServer(http.Dir("./")))
+	err := http.ListenAndServe(":3000", nil)
+	if err != nil {
+		fmt.Println("ERROR: ", err)
+	}
 }

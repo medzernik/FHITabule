@@ -1,4 +1,4 @@
 # Server configurations
-# Bot token from telegram botfather.
 nastavenie:
   poschodie: 8
+  apikluc: ""
