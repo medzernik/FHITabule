@@ -64,9 +64,10 @@ func main() {
 		w.OpenDevTools()
 
 		//TODO: google API cesta na hopu MHD + auto
-		var links []string
+		var linksMain []string
+		var linksPresentation []string
 
-		links = append(links, "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000", "file://C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/Slide1.PNG")
+		linksMain = append(linksMain, "https://imhd.sk/ba/online-zastavkova-tabula?theme=white&zoom=67&st=66", "http://localhost:3000")
 
 		imagePath, errDir := os.ReadDir("presentation_images")
 		if errDir != nil {
@@ -76,15 +77,19 @@ func main() {
 		fmt.Println(imagePath[0].Name())
 
 		for _, i := range imagePath {
-			links = append(links, "file://C:/Users/medze/Desktop/workspace/Programovanie/Go/FHITabule/presentation_images/"+i.Name())
+			linksPresentation = append(linksPresentation, "http://localhost:3000/presentation_images/"+i.Name())
 		}
 
 		for {
-
-			for i := range links {
-				err := w.ExecuteJavaScript("window.location.href = \"" + links[i] + "\";")
+			for i := range linksMain {
+				err := w.ExecuteJavaScript("window.location.href = \"" + linksMain[i] + "\";")
 				if err != nil {
 					fmt.Println("ERROR:", err)
+				}
+				time.Sleep(3 * time.Second)
+				err1 := w.ExecuteJavaScript("window.location.href = \"" + linksPresentation[i] + "\";")
+				if err1 != nil {
+					fmt.Println("ERROR:", err1)
 				}
 				time.Sleep(3 * time.Second)
 			}
