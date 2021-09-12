@@ -1,6 +1,7 @@
 package main
 
 import (
+	"FHITabule/calendarparser"
 	"FHITabule/config"
 	"FHITabule/distance"
 	"fmt"
@@ -26,10 +27,10 @@ func runLocalWebpageDisplay() {
 
 func main() {
 	config.Initialization()
-	go runLocalWebpageDisplay()
+	//go runLocalWebpageDisplay()
 	go StartCustomServer()
 
-	//calendarparser.Initialization()
+	calendarparser.Initialization()
 	minutesTraveled := distance.GetTimeToHOPA("University of Economics in Bratislava, Dolnozemská cesta 1, 852 35 Petržalka, Slovakia", "Študentský domov Prokopa Veľkého, \"HOPA\", Prokopa Veľkého 41, 811 04 Bratislava, Slovakia")
 	fmt.Println("Travel time to HOPA: ", minutesTraveled, " minut")
 

@@ -10,14 +10,14 @@ import (
 )
 
 type CalendarInformation struct {
-	UUID         string
-	EventName    string
-	DateStart    time.Time
-	DateEnd      time.Time
-	EventTime    string
-	Floor        string
-	Room         string
-	Presentation bool
+	Poschodie string
+	Miestnosť string
+	Predmet   string
+	Čas       string
+	Prednáška bool
+	DateStart time.Time
+	DateEnd   time.Time
+	UUID      string
 }
 
 type CurrentTime struct {
@@ -112,14 +112,14 @@ func ParseIntoVariables(c *gocal.Gocal) {
 
 		//fmt.Printf("%+v\n", e)
 
-		CalendarEvents[iterator].EventName = strings.Join(summaryProcessed[0:], " ")
+		CalendarEvents[iterator].Predmet = strings.Join(summaryProcessed[0:], " ")
 		CalendarEvents[iterator].DateStart = *e.Start
 		CalendarEvents[iterator].DateEnd = *e.End
-		CalendarEvents[iterator].Floor = floor
-		CalendarEvents[iterator].Room = room
-		CalendarEvents[iterator].Presentation = presentationBool
+		CalendarEvents[iterator].Poschodie = floor
+		CalendarEvents[iterator].Miestnosť = room
+		CalendarEvents[iterator].Prednáška = presentationBool
 		CalendarEvents[iterator].UUID = e.Uid
-		CalendarEvents[iterator].EventTime = e.Start.Format(time.Kitchen)
+		CalendarEvents[iterator].Čas = e.Start.Format(time.Kitchen)
 
 		iterator += 1
 
@@ -141,14 +141,14 @@ func PrintClasses(CalendarEvents []CalendarInformation) {
 	for _, cal := range CalendarEvents {
 		//TODO: Change the first part of the comparison to time.Now() for production
 		if AssignTime(timeCurrentTemp) == AssignTime(cal.DateStart) {
-			tmp = "Nazov predmetu: " + cal.EventName + "\n"
-			if cal.Presentation == true {
+			tmp = "Nazov predmetu: " + cal.Predmet + "\n"
+			if cal.Prednáška == true {
 				tmp += "PREDNASKA\n"
 			} else {
 				tmp += "CVICENIE\n"
 			}
-			tmp += "Poschodie: " + cal.Floor + "\n"
-			tmp += "Miestnost: " + cal.Room + "\n"
+			tmp += "Poschodie: " + cal.Poschodie + "\n"
+			tmp += "Miestnost: " + cal.Miestnosť + "\n"
 			tmp += "Cas: " + cal.DateStart.Format(time.Kitchen) + "\n"
 			//Debug tmp addon
 			tmp += "-------------\n\n"
