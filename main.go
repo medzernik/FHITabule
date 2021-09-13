@@ -54,8 +54,8 @@ func main() {
 		a.Start()
 		var w, _ = a.NewWindow("http://localhost:3000", &astilectron.WindowOptions{
 			Center:          astikit.BoolPtr(true),
-			Height:          astikit.IntPtr(600),
-			Width:           astikit.IntPtr(600),
+			Width:           astikit.IntPtr(1920),
+			Height:          astikit.IntPtr(1080),
 			Minimizable:     astikit.BoolPtr(false),
 			Fullscreen:      astikit.BoolPtr(false),
 			BackgroundColor: astikit.StrPtr("black"),

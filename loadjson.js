@@ -68,18 +68,18 @@ function CreateTableFromJSON() {
 
     var tr = table.insertRow(-1);                   // TABLE ROW.
 
-    for (var i = 0; i < col.length ; i++) {
+    for (var i = 0; i < col.length-3 ; i++) {
         var th = document.createElement("th");      // TABLE HEADER.
         th.innerHTML = col[i];
         tr.appendChild(th);
     }
 
     // ADD JSON DATA TO THE TABLE AS ROWS.
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length-3; i++) {
 
         tr = table.insertRow(-1);
 
-        for (var j = 0; j < col.length ; j++) {
+        for (var j = 0; j < col.length-3 ; j++) {
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = data[i][col[j]];
         }
